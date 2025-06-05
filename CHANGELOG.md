@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.12] - 2025-06-05
+
+### Changed
+
+- Update to latest dart version
+
 ## [1.0.11] - 2024-08-30
 
 ### Changed
@@ -84,6 +90,7 @@
 
 - Initial version
 
+[1.0.12]: https://github.com/inlavigo/gg_changelog/compare/1.0.11...1.0.12
 [1.0.11]: https://github.com/inlavigo/gg_changelog/compare/1.0.10...1.0.11
 [1.0.10]: https://github.com/inlavigo/gg_changelog/compare/1.0.8...1.0.10
 [1.0.7]: https://github.com/inlavigo/gg_changelog/compare/1.0.6...1.0.7

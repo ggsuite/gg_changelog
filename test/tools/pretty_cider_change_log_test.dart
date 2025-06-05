@@ -47,7 +47,8 @@ void main() {
   });
 }
 
-final brokenSample0 = '''
+final brokenSample0 =
+    '''
 # Changelog
 ## 1.0.13 - 2024-04-05
 ### Added
@@ -58,9 +59,10 @@ final brokenSample0 = '''
 - Initial version
 
 [1.0.12]: https://github.com/inlavigo/gg/releases/tag/1.0.12'''
-    .trim();
+        .trim();
 
-final brokenSample1 = '''
+final brokenSample1 =
+    '''
 # Changelog
 ## 1.0.13 - 2024-04-05
 ### Added
@@ -71,7 +73,7 @@ final brokenSample1 = '''
 
 [1.0.12]: https://github.com/inlavigo/gg/releases/tag/1.0.12
 '''
-    .trim();
+        .trim();
 
 const fixedSample = '''# Changelog
 

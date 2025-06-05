@@ -43,10 +43,7 @@ class HasRightFormat extends DirCommand<bool> {
 
     final result = await printer.logTask(
       success: (ok) => ok,
-      task: () => get(
-        directory: directory,
-        ggLog: errors.add,
-      ),
+      task: () => get(directory: directory, ggLog: errors.add),
     );
 
     if (!result) {
@@ -59,10 +56,7 @@ class HasRightFormat extends DirCommand<bool> {
   // ...........................................................................
   /// Returns true if CHANGELOG.md has the right format
   @override
-  Future<bool> get({
-    required Directory directory,
-    required GgLog ggLog,
-  }) async {
+  Future<bool> get({required Directory directory, required GgLog ggLog}) async {
     final cider = await _ciderProject.get(directory: directory, ggLog: (_) {});
     try {
       await cider.getAllVersions();

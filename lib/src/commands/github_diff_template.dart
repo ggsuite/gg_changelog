@@ -18,7 +18,8 @@ class GithubDiffTemplate extends DirCommand<String> {
   GithubDiffTemplate({
     required super.ggLog,
     super.name = 'github-diff-template',
-    super.description = 'Reads repository URL from pubspec.yaml and '
+    super.description =
+        'Reads repository URL from pubspec.yaml and '
         'returns the cider diff template',
     RepoUrl? repoUrl,
   }) : _repoUrl = repoUrl ?? const RepoUrl();

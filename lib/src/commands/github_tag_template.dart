@@ -18,17 +18,15 @@ class GithubTagTemplate extends DirCommand<String> {
   GithubTagTemplate({
     required super.ggLog,
     super.name = 'github-tag-template',
-    super.description = 'Reads repository URL from pubspec.yaml and '
+    super.description =
+        'Reads repository URL from pubspec.yaml and '
         'returns the cider tag template',
     RepoUrl? repoUrl,
   }) : _repoUrl = repoUrl ?? const RepoUrl();
 
   // ...........................................................................
   @override
-  Future<String> get({
-    required Directory directory,
-    GgLog? ggLog,
-  }) async {
+  Future<String> get({required Directory directory, GgLog? ggLog}) async {
     // Does the directory exist?
     await check(directory: directory);
     final repoUrl = await _repoUrl.get(directory: directory);

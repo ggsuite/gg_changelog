@@ -62,10 +62,79 @@ void main() {
         group('and return', () {
           group('false', () {
             group('and not add the message', () {
-              test('when the message is already contained at Unreleased',
-                  () async {
-                // ...........................
-                // Exec command the first time
+              test(
+                'when the message is already contained at Unreleased',
+                () async {
+                  // ...........................
+                  // Exec command the first time
+                  // => Message should be added
+                  final result0 = await add.exec(
+                    directory: d,
+                    ggLog: ggLog,
+                    message: 'Message 1',
+                    logType: LogType.added,
+                  );
+
+                  // Check result
+                  expect(result0, true);
+
+                  final content0 = await changelogContent();
+                  expect(content0, expectedContent);
+
+                  // ..........................
+                  // Exec command a second time
+                  // => Message should not be added again
+                  final result1 = await add.exec(
+                    directory: d,
+                    ggLog: ggLog,
+                    message: 'Message 1',
+                    logType: LogType.added,
+                  );
+
+                  final content1 = await changelogContent();
+                  expect(content1, content0);
+
+                  // Check result
+                  expect(result1, false);
+
+                  // ...................
+                  // Release the version
+                  await Release(ggLog: ggLog).exec(
+                    directory: d,
+                    ggLog: ggLog,
+                    releaseVersion: Version(1, 2, 3),
+                  );
+
+                  final content2 = await changelogContent();
+                  expect(content2, contains('## [1.2.3]'));
+                  expect(content2, isNot(contains('Unreleased')));
+
+                  // ...................
+                  // Add Message 1 again
+                  // => Message should be added
+                  // because the previous version was released
+                  final result2 = await add.exec(
+                    directory: d,
+                    ggLog: ggLog,
+                    message: 'Message 1',
+                    logType: LogType.added,
+                  );
+                  expect(result2, true);
+                  final content3 = await changelogContent();
+
+                  // Count number of occurrances of 'Message 1'
+                  final count = RegExp('Message 1').allMatches(content3).length;
+                  expect(count, 2);
+                },
+              );
+            });
+          });
+
+          group('true', () {
+            test(
+              'when the message is not contained in the unreleased section',
+              () async {
+                // Exec command
                 // => Message should be added
                 final result0 = await add.exec(
                   directory: d,
@@ -79,73 +148,8 @@ void main() {
 
                 final content0 = await changelogContent();
                 expect(content0, expectedContent);
-
-                // ..........................
-                // Exec command a second time
-                // => Message should not be added again
-                final result1 = await add.exec(
-                  directory: d,
-                  ggLog: ggLog,
-                  message: 'Message 1',
-                  logType: LogType.added,
-                );
-
-                final content1 = await changelogContent();
-                expect(content1, content0);
-
-                // Check result
-                expect(result1, false);
-
-                // ...................
-                // Release the version
-                await Release(ggLog: ggLog).exec(
-                  directory: d,
-                  ggLog: ggLog,
-                  releaseVersion: Version(1, 2, 3),
-                );
-
-                final content2 = await changelogContent();
-                expect(content2, contains('## [1.2.3]'));
-                expect(content2, isNot(contains('Unreleased')));
-
-                // ...................
-                // Add Message 1 again
-                // => Message should be added
-                // because the previous version was released
-                final result2 = await add.exec(
-                  directory: d,
-                  ggLog: ggLog,
-                  message: 'Message 1',
-                  logType: LogType.added,
-                );
-                expect(result2, true);
-                final content3 = await changelogContent();
-
-                // Count number of occurrances of 'Message 1'
-                final count = RegExp('Message 1').allMatches(content3).length;
-                expect(count, 2);
-              });
-            });
-          });
-
-          group('true', () {
-            test('when the message is not contained in the unreleased section',
-                () async {
-              // Exec command
-              // => Message should be added
-              final result0 = await add.exec(
-                directory: d,
-                ggLog: ggLog,
-                message: 'Message 1',
-                logType: LogType.added,
-              );
-
-              // Check result
-              expect(result0, true);
-
-              final content0 = await changelogContent();
-              expect(content0, expectedContent);
-            });
+              },
+            );
           });
         });
       });
@@ -169,12 +173,7 @@ void main() {
           }
 
           expect(exception, contains('Run again with '));
-          expect(
-            exception,
-            contains(
-              'yourMessage',
-            ),
-          );
+          expect(exception, contains('yourMessage'));
         });
 
         test('when --log-type arg is not given', () async {
@@ -205,24 +204,28 @@ void main() {
       });
 
       group('should handle special cases like', () {
-        test('the initial CHANGLOE.md generated by gg_create_package',
-            () async {
-          final changelogFile = File('${d.path}/CHANGELOG.md');
-          await changelogFile.writeAsString(changeLogCreatedByGgCreatePackage);
+        test(
+          'the initial CHANGLOE.md generated by gg_create_package',
+          () async {
+            final changelogFile = File('${d.path}/CHANGELOG.md');
+            await changelogFile.writeAsString(
+              changeLogCreatedByGgCreatePackage,
+            );
 
-          await add.exec(
-            directory: d,
-            ggLog: ggLog,
-            message: 'Message 1',
-            logType: LogType.added,
-          );
+            await add.exec(
+              directory: d,
+              ggLog: ggLog,
+              message: 'Message 1',
+              logType: LogType.added,
+            );
 
-          final contentAfter = await changelogContent();
-          expect(
-            contentAfter,
-            changeLogCreatedByGgCreatePackageAfterAddingMessage,
-          );
-        });
+            final contentAfter = await changelogContent();
+            expect(
+              contentAfter,
+              changeLogCreatedByGgCreatePackageAfterAddingMessage,
+            );
+          },
+        );
       });
     });
   });

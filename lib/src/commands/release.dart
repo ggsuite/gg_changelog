@@ -31,13 +31,12 @@ class Release extends DirCommand<void> {
     required GgLog ggLog,
     Version? releaseVersion,
     DateTime? releaseDate,
-  }) =>
-      get(
-        directory: directory,
-        ggLog: ggLog,
-        releaseVersion: releaseVersion,
-        releaseDate: releaseDate,
-      );
+  }) => get(
+    directory: directory,
+    ggLog: ggLog,
+    releaseVersion: releaseVersion,
+    releaseDate: releaseDate,
+  );
 
   // ...........................................................................
   /// Returns true if a message was added to the change log.
@@ -59,13 +58,15 @@ class Release extends DirCommand<void> {
 
     // Read the release version from the command line
     final releaseVersionStr = argResults?['release-version'] as String?;
-    releaseVersion ??=
-        releaseVersionStr != null ? Version.parse(releaseVersionStr) : null;
+    releaseVersion ??= releaseVersionStr != null
+        ? Version.parse(releaseVersionStr)
+        : null;
 
     final releaseDateStr = argResults?['release-date'] as String?;
 
-    releaseDate ??=
-        releaseDateStr != null ? DateTime.parse(releaseDateStr) : null;
+    releaseDate ??= releaseDateStr != null
+        ? DateTime.parse(releaseDateStr)
+        : null;
 
     // Use cider to write into CHANGELOG.md
     final cider = await _ciderProject.get(directory: directory, ggLog: ggLog);

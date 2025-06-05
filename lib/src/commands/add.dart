@@ -57,13 +57,12 @@ class Add extends DirCommand<bool> {
     required GgLog ggLog,
     String? message,
     LogType? logType,
-  }) =>
-      get(
-        directory: directory,
-        ggLog: ggLog,
-        message: message,
-        logType: logType,
-      );
+  }) => get(
+    directory: directory,
+    ggLog: ggLog,
+    message: message,
+    logType: logType,
+  );
 
   // ...........................................................................
   /// Returns true if a message was added to the change log.
@@ -92,9 +91,7 @@ class Add extends DirCommand<bool> {
     final changelog = await changelogFile.readAsString();
 
     if (_unreleasedSectionContainsMessage(changelog, message)) {
-      ggLog.call(
-        darkGray('The message »message« is already in CHANGELOG.md'),
-      );
+      ggLog.call(darkGray('The message »message« is already in CHANGELOG.md'));
       return false;
     }
 
@@ -137,9 +134,7 @@ class Add extends DirCommand<bool> {
       final message = argResults!['message'] as String;
       return message;
     } catch (e) {
-      throw Exception(
-        yellow('Run again with ') + blue('-m "yourMessage"'),
-      );
+      throw Exception(yellow('Run again with ') + blue('-m "yourMessage"'));
     }
   }
 
@@ -164,8 +159,9 @@ class Add extends DirCommand<bool> {
       return false;
     }
 
-    final indexOfUnreleased =
-        parts.indexWhere((element) => element.contains('Unreleased'));
+    final indexOfUnreleased = parts.indexWhere(
+      (element) => element.contains('Unreleased'),
+    );
 
     if (indexOfUnreleased < 0) {
       return false;

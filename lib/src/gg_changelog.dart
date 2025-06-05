@@ -26,6 +26,7 @@ class GgChangelog extends Command<dynamic> {
   @override
   final name = 'changelog';
   @override
-  final description = 'various tools to manipulate dart CHANGELOG.md files. '
+  final description =
+      'various tools to manipulate dart CHANGELOG.md files. '
       'Based on cider package.';
 }

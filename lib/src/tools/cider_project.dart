@@ -21,10 +21,10 @@ class CiderProject {
     required GgLog ggLog,
     GithubDiffTemplate? githubDiffTemplate,
     GithubTagTemplate? githubTagTemplate,
-  })  : _githubDiffTemplate =
-            githubDiffTemplate ?? GithubDiffTemplate(ggLog: ggLog),
-        _githubTagTemplate =
-            githubTagTemplate ?? GithubTagTemplate(ggLog: ggLog);
+  }) : _githubDiffTemplate =
+           githubDiffTemplate ?? GithubDiffTemplate(ggLog: ggLog),
+       _githubTagTemplate =
+           githubTagTemplate ?? GithubTagTemplate(ggLog: ggLog);
 
   // ...........................................................................
   /// Creates and returns a cider [Project]
@@ -44,10 +44,7 @@ class CiderProject {
 
     final result = Project(
       directory.path,
-      Config(
-        diffTemplate: diffTemplate,
-        tagTemplate: tagTemplate,
-      ),
+      Config(diffTemplate: diffTemplate, tagTemplate: tagTemplate),
     );
 
     return result;

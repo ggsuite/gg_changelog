@@ -33,8 +33,10 @@ void main() {
     group('exec(directory, ggLog)', () {
       test('should log and return the template', () async {
         // Exec command
-        final result =
-            await githubDiffTemplate.exec(directory: d, ggLog: ggLog);
+        final result = await githubDiffTemplate.exec(
+          directory: d,
+          ggLog: ggLog,
+        );
 
         // Check result
         expect(

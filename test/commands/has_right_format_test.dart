@@ -60,14 +60,15 @@ void main() {
 
             // ............
             // Exec command
-            final result = await hasRightFormat.get(
-              directory: d,
-              ggLog: ggLog,
-            );
+            final result = await hasRightFormat.get(directory: d, ggLog: ggLog);
 
             // Check result
             expect(result, false);
-            expect(messages[0], 'Invalid release header format: ' '"1.2.3"');
+            expect(
+              messages[0],
+              'Invalid release header format: '
+              '"1.2.3"',
+            );
           });
         });
       });
@@ -80,10 +81,7 @@ void main() {
 
           // ............
           // Exec command
-          final result = await hasRightFormat.get(
-            directory: d,
-            ggLog: ggLog,
-          );
+          final result = await hasRightFormat.get(directory: d, ggLog: ggLog);
 
           // Check result
           expect(result, true);
@@ -116,10 +114,7 @@ void main() {
             }
 
             expect(messages[0], '⌛️ CHANGELOG.md has right format');
-            expect(
-              messages[1],
-              contains('❌ CHANGELOG.md has right format'),
-            );
+            expect(messages[1], contains('❌ CHANGELOG.md has right format'));
 
             expect(reason, contains('Invalid release header format: "1.2.3"'));
           });
