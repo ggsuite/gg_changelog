@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Add .gitattributes file
+
 ## [1.0.12] - 2025-06-05
 
 ### Changed
@@ -90,6 +96,7 @@
 
 - Initial version
 
+[Unreleased]: https://github.com/inlavigo/gg_changelog/compare/1.0.12...HEAD
 [1.0.12]: https://github.com/inlavigo/gg_changelog/compare/1.0.11...1.0.12
 [1.0.11]: https://github.com/inlavigo/gg_changelog/compare/1.0.10...1.0.11
 [1.0.10]: https://github.com/inlavigo/gg_changelog/compare/1.0.8...1.0.10
