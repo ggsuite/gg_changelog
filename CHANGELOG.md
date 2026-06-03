@@ -6,6 +6,10 @@
 
 - Add .gitattributes file
 
+### Changed
+
+- fix: skip CHANGELOG format check when no pubspec.yaml (TypeScript projects)
+
 ## [1.0.12] - 2025-06-05
 
 ### Changed

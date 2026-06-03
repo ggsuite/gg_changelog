@@ -87,6 +87,18 @@ void main() {
           expect(result, true);
           expect(messages, isEmpty);
         });
+
+        test('and skips the check when there is no pubspec.yaml '
+            '(e.g. TypeScript)', () async {
+          // Remove the pubspec.yaml so the directory looks like a non-Dart
+          // (e.g. TypeScript) package without a CHANGELOG.md to validate.
+          await File('${d.path}/pubspec.yaml').delete();
+
+          final result = await hasRightFormat.get(directory: d, ggLog: ggLog);
+
+          expect(result, true);
+          expect(messages, isEmpty);
+        });
       });
     });
 
