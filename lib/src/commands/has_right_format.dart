@@ -57,6 +57,16 @@ class HasRightFormat extends DirCommand<bool> {
   /// Returns true if CHANGELOG.md has the right format
   @override
   Future<bool> get({required Directory directory, required GgLog ggLog}) async {
+    // The cider-based CHANGELOG validation only applies to Dart/Flutter
+    // packages (cider requires a pubspec.yaml). Project types without a
+    // pubspec.yaml — e.g. TypeScript — use a registry/manifest based
+    // versioning flow and have no CHANGELOG.md to validate here, so the
+    // check is skipped.
+    final pubspec = File('${directory.path}/pubspec.yaml');
+    if (!pubspec.existsSync()) {
+      return true;
+    }
+
     final cider = await _ciderProject.get(directory: directory, ggLog: (_) {});
     try {
       await cider.getAllVersions();
