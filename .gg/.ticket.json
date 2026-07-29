@@ -1,0 +1,10 @@
+{
+  "issue_id": "01_dont_add_underscore",
+  "description": "ChangeLog MD fügt immer wieder _ ein",
+  "repositories": [
+    {
+      "name": "gg_changelog",
+      "url": "git@github.com:ggsuite/gg_changelog.git"
+    }
+  ]
+}
