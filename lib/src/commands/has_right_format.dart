@@ -21,7 +21,7 @@ class HasRightFormat extends DirCommand<bool> {
     super.name = 'has-right-format',
     super.description = 'HasRightformats the current change log.',
     CiderProject? ciderProject,
-  }) : _ciderProject = ciderProject ?? CiderProject(ggLog: ggLog) {
+  }) : _ciderProject = ciderProject ?? const CiderProject() {
     _addParam();
   }
 
@@ -67,7 +67,7 @@ class HasRightFormat extends DirCommand<bool> {
       return true;
     }
 
-    final cider = await _ciderProject.get(directory: directory, ggLog: (_) {});
+    final cider = await _ciderProject.get(directory: directory);
     try {
       await cider.getAllVersions();
       return true;

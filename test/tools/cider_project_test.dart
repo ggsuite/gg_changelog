@@ -13,17 +13,14 @@ import 'package:test/test.dart';
 import '../pubspec_yaml.dart';
 
 void main() {
-  final messages = <String>[];
-  final ggLog = messages.add;
   late Directory d;
   late CiderProject ciderProject;
 
   setUp(() async {
-    messages.clear();
     d = await Directory.systemTemp.createTemp();
     final pubspecFile = File('${d.path}/pubspec.yaml');
     await pubspecFile.writeAsString(pubspecExample);
-    ciderProject = CiderProject(ggLog: ggLog);
+    ciderProject = const CiderProject();
   });
 
   tearDown(() async {
@@ -31,13 +28,24 @@ void main() {
   });
 
   group('Cider', () {
-    group('get(directory, ggLog)', () {
+    group('get(directory)', () {
       group('should succeed', () {
         test('and return a cider project', () async {
-          expect(
-            await ciderProject.get(directory: d, ggLog: ggLog),
-            isA<Project>(),
+          expect(await ciderProject.get(directory: d), isA<Project>());
+        });
+
+        test('and not write repository links into CHANGELOG.md', () async {
+          final changelogFile = File('${d.path}/CHANGELOG.md');
+          await changelogFile.writeAsString(
+            '# Changelog\n\n## 1.0.0 - 2024-04-05\n\n### Added\n\n- Initial\n',
           );
+
+          final project = await ciderProject.get(directory: d);
+          await project.release(DateTime(2024, 4, 6));
+
+          final changelog = await changelogFile.readAsString();
+          expect(changelog, contains('## 2.4.6 - 2024-04-06'));
+          expect(changelog, isNot(contains('https://github.com')));
         });
       });
     });

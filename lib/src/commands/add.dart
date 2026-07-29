@@ -45,7 +45,7 @@ class Add extends DirCommand<bool> {
     super.name = 'add',
     super.description = 'Adds a message to the change log.',
     CiderProject? ciderProject,
-  }) : _ciderProject = ciderProject ?? CiderProject(ggLog: ggLog) {
+  }) : _ciderProject = ciderProject ?? const CiderProject() {
     _addParam();
   }
 
@@ -95,8 +95,11 @@ class Add extends DirCommand<bool> {
       return false;
     }
 
-    final cider = await _ciderProject.get(directory: directory, ggLog: ggLog);
+    final cider = await _ciderProject.get(directory: directory);
     await cider.addUnreleased(logType.name, message);
+
+    // Remove the repository links cider took over from previous releases
+    await removeChangelogLinksInDirectory(directory);
 
     // Pretty print the changelog
     await prettyPrintChangelogInDirectory(directory);
