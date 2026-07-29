@@ -1,0 +1,10 @@
+{
+  "issue_id": "06_changlog_error_when_version_already_exists",
+  "description": "Fix publish error when version in CHANGELOG.md already exists",
+  "repositories": [
+    {
+      "name": "gg_changelog",
+      "url": "git@github.com:ggsuite/gg_changelog.git"
+    }
+  ]
+}
