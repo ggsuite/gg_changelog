@@ -16,3 +16,4 @@ export 'src/tools/repo_url.dart';
 export 'src/tools/cider_project.dart';
 export 'src/tools/pretty_cider_change_log.dart';
 export 'src/tools/remove_changelog_links.dart';
+export 'src/tools/unescape_changelog.dart';

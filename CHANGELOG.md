@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.2 - 2026-07-29
+
+### Fixed
+
+- Do not escape the markdown characters `_ * ~ | [ ]` in CHANGELOG.md anymore
+- Repair CHANGELOG.md files damaged by previous runs
+
 ## 1.1.1 - 2026-07-29
 
 ### Changed
