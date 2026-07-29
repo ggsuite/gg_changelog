@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Fix publish error when version in CHANGELOG.md already exists
+
 ## 1.1.2 - 2026-07-29
 
 ### Fixed
@@ -47,7 +53,7 @@
 
 ### Removed
 
-- dependency to gg\_install\_gg, remove ./check script
+- dependency to gg_install_gg, remove ./check script
 - dependency pana
 
 ## 1.0.8 - 2024-04-11
@@ -58,7 +64,7 @@
 
 ### Fixed
 
-- error happening with CHANGELOG.md created by gg\_create\_package
+- error happening with CHANGELOG.md created by gg_create_package
 
 ## 1.0.6 - 2024-04-10
 

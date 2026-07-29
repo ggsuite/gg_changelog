@@ -6,8 +6,10 @@
 
 import 'dart:io';
 
+import 'package:cider/cider.dart';
 import 'package:gg_args/gg_args.dart';
 import 'package:gg_changelog/gg_changelog.dart';
+import 'package:gg_console_colors/gg_console_colors.dart';
 import 'package:gg_log/gg_log.dart';
 import 'package:pub_semver/pub_semver.dart';
 
@@ -74,8 +76,22 @@ class Release extends DirCommand<void> {
     await unescapeChangelogInDirectory(directory);
     await removeChangelogLinksInDirectory(directory);
 
-    // Use cider to write into CHANGELOG.md
     final cider = await _ciderProject.get(directory: directory);
+
+    // Take the version from pubspec.yaml when it is not given
+    releaseVersion ??= await cider.getVersion();
+
+    // Releasing a version a second time would make cider throw
+    // »Bad state: Release 1.2.3 already exists«. Nothing needs to be done
+    // because the version is already in CHANGELOG.md.
+    if (await _isAlreadyReleased(cider, releaseVersion)) {
+      ggLog.call(
+        darkGray('The version »$releaseVersion« is already in CHANGELOG.md'),
+      );
+      return;
+    }
+
+    // Use cider to write into CHANGELOG.md
     await cider.release(releaseDate ?? DateTime.now(), version: releaseVersion);
 
     // Revert the markdown escapes cider added while rewriting the changelog
@@ -93,6 +109,18 @@ class Release extends DirCommand<void> {
   // ######################
 
   final CiderProject _ciderProject;
+
+  // ...........................................................................
+  /// Returns true when [version] already has a section in CHANGELOG.md
+  Future<bool> _isAlreadyReleased(Project cider, Version version) async {
+    // Yanked versions are part of the change log as well. Cider would throw
+    // for them too. Thus they need to be taken into account here.
+    final releasedVersions = await cider.getAllVersions(includeYanked: true);
+
+    // Cider trims and lowercases versions before comparing them. Do the same.
+    final searched = version.toString().trim().toLowerCase();
+    return releasedVersions.any((e) => e.trim().toLowerCase() == searched);
+  }
 
   // ...........................................................................
   void _addParam() {

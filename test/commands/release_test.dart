@@ -255,6 +255,114 @@ void main() {
         });
       });
 
+      group('does nothing', () {
+        group('when the version is already in CHANGELOG.md', () {
+          test('and the version is given by param', () async {
+            // Release version 1.2.3 a first time
+            await release.exec(
+              directory: d,
+              ggLog: ggLog,
+              releaseVersion: Version(1, 2, 3),
+              releaseDate: DateTime(2024, 1, 2),
+            );
+
+            final contentBefore = await changelogContent();
+            messages.clear();
+
+            // Add another unreleased message and release 1.2.3 again
+            await add.exec(
+              directory: d,
+              ggLog: ggLog,
+              message: 'Message 2',
+              logType: LogType.added,
+            );
+            final contentAfterAdd = await changelogContent();
+
+            await release.exec(
+              directory: d,
+              ggLog: ggLog,
+              releaseVersion: Version(1, 2, 3),
+              releaseDate: DateTime(2024, 3, 4),
+            );
+
+            // The change log was not touched
+            expect(await changelogContent(), contentAfterAdd);
+            expect(contentAfterAdd, contains('Unreleased'));
+            expect(contentBefore, contains('## 1.2.3 - 2024-01-02'));
+            expect(await changelogContent(), isNot(contains('2024-03-04')));
+
+            // The user was informed
+            expect(
+              messages.last,
+              contains('The version »1.2.3« is already in CHANGELOG.md'),
+            );
+          });
+
+          test('and the version is taken from pubspec.yaml', () async {
+            // pubspecExample has version 2.4.6
+            await release.exec(
+              directory: d,
+              ggLog: ggLog,
+              releaseVersion: null,
+              releaseDate: DateTime(2024, 1, 2),
+            );
+
+            await expectVersion('2.4.6');
+            final contentAfterRelease = await changelogContent();
+            messages.clear();
+
+            await release.exec(
+              directory: d,
+              ggLog: ggLog,
+              releaseVersion: null,
+              releaseDate: DateTime(2024, 3, 4),
+            );
+
+            expect(await changelogContent(), contentAfterRelease);
+            expect(
+              messages.last,
+              contains('The version »2.4.6« is already in CHANGELOG.md'),
+            );
+          });
+
+          test(
+            'and the existing headline was escaped by a previous run',
+            () async {
+              // A headline like »## \[1.2.3\] - 2024-01-02« is not recognized
+              // as a release by cider. It must be repaired before the version
+              // is looked up. Otherwise the release would be written twice.
+              final changelogFile = File('${d.path}/CHANGELOG.md');
+              final changelog = await changelogFile.readAsString();
+              await changelogFile.writeAsString(
+                '$changelog\n'
+                r'## \[1.2.3\] - 2024-01-02'
+                '\n\n'
+                '### Added\n\n'
+                '- Message 0\n',
+              );
+
+              await release.exec(
+                directory: d,
+                ggLog: ggLog,
+                releaseVersion: Version(1, 2, 3),
+                releaseDate: DateTime(2024, 3, 4),
+              );
+
+              final content = await changelogContent();
+              expect(content, contains('## 1.2.3 - 2024-01-02'));
+              expect(content, isNot(contains('2024-03-04')));
+
+              // The version was not released twice
+              expect('## 1.2.3'.allMatches(content).length, 1);
+              expect(
+                messages.last,
+                contains('The version »1.2.3« is already in CHANGELOG.md'),
+              );
+            },
+          );
+        });
+      });
+
       group('throws', () {
         test('when CHANGELOG.md does not exist', () async {
           final changelogFile = File('${d.path}/CHANGELOG.md');
