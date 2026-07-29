@@ -106,7 +106,7 @@ void main() {
                   );
 
                   final content2 = await changelogContent();
-                  expect(content2, contains('## [1.2.3]'));
+                  expect(content2, contains('## 1.2.3 -'));
                   expect(content2, isNot(contains('Unreleased')));
 
                   // ...................

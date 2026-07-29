@@ -19,7 +19,7 @@ class Release extends DirCommand<void> {
     super.name = 'release',
     super.description = 'Releases the current change log.',
     CiderProject? ciderProject,
-  }) : _ciderProject = ciderProject ?? CiderProject(ggLog: ggLog) {
+  }) : _ciderProject = ciderProject ?? const CiderProject() {
     _addParam();
   }
 
@@ -69,8 +69,11 @@ class Release extends DirCommand<void> {
         : null;
 
     // Use cider to write into CHANGELOG.md
-    final cider = await _ciderProject.get(directory: directory, ggLog: ggLog);
+    final cider = await _ciderProject.get(directory: directory);
     await cider.release(releaseDate ?? DateTime.now(), version: releaseVersion);
+
+    // Remove the repository links cider took over from previous releases
+    await removeChangelogLinksInDirectory(directory);
 
     // Pretty print the changelog
     await prettyPrintChangelogInDirectory(directory);

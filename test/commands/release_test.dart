@@ -45,7 +45,7 @@ void main() {
   // ...........................................................................
   Future<void> expectVersion(String version) async {
     var content = changelogContent();
-    expect(await content, contains('## [$version]'));
+    expect(await content, contains('## $version -'));
   }
 
   // ...........................................................................
@@ -76,7 +76,47 @@ void main() {
   group('Release', () {
     group('exec(directory, ggLog, releaseVersion, releaseDate)', () {
       group('succeeds', () {
-        group('and turns ## [Unreleased] into ## [1.0.0] - 2024-04-05', () {
+        group('and writes no repository links into CHANGELOG.md', () {
+          test('for the released version', () async {
+            await release.exec(
+              directory: d,
+              ggLog: ggLog,
+              releaseVersion: Version(1, 2, 3),
+              releaseDate: DateTime(2024, 1, 2),
+            );
+
+            final content = await changelogContent();
+            expect(content, contains('## 1.2.3 - 2024-01-02'));
+            expect(content, isNot(contains('https://github.com')));
+          });
+
+          test('and removes the links of previous releases', () async {
+            // Write a change log containing links of previous releases
+            final changelogFile = File('${d.path}/CHANGELOG.md');
+            final changelog = await changelogFile.readAsString();
+            await changelogFile.writeAsString(
+              '$changelog\n'
+              '## [1.0.0] - 2024-01-01\n\n'
+              '### Added\n\n'
+              '- Message 0\n\n'
+              '[1.0.0]: https://github.com/inlavigo/gg_changelog/tag/1.0.0\n',
+            );
+
+            await release.exec(
+              directory: d,
+              ggLog: ggLog,
+              releaseVersion: Version(1, 2, 3),
+              releaseDate: DateTime(2024, 1, 2),
+            );
+
+            final content = await changelogContent();
+            expect(content, contains('## 1.2.3 - 2024-01-02'));
+            expect(content, contains('## 1.0.0 - 2024-01-01'));
+            expect(content, isNot(contains('https://github.com')));
+          });
+        });
+
+        group('and turns ## Unreleased into ## 1.0.0 - 2024-04-05', () {
           group('with release date', () {
             test('from today, when releaseDate is null', () async {
               await release.exec(

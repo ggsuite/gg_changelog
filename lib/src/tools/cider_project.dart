@@ -7,8 +7,6 @@
 import 'dart:io';
 
 import 'package:cider/cider.dart';
-import 'package:gg_changelog/gg_changelog.dart';
-import 'package:gg_log/gg_log.dart';
 
 // ignore: implementation_imports
 import 'package:cider/src/cli/config.dart';
@@ -17,42 +15,17 @@ import 'package:mocktail/mocktail.dart';
 /// Creates a cider project
 class CiderProject {
   /// Constructor
-  CiderProject({
-    required GgLog ggLog,
-    GithubDiffTemplate? githubDiffTemplate,
-    GithubTagTemplate? githubTagTemplate,
-  }) : _githubDiffTemplate =
-           githubDiffTemplate ?? GithubDiffTemplate(ggLog: ggLog),
-       _githubTagTemplate =
-           githubTagTemplate ?? GithubTagTemplate(ggLog: ggLog);
+  const CiderProject();
 
   // ...........................................................................
   /// Creates and returns a cider [Project]
-  Future<Project> get({
-    required Directory directory,
-    required GgLog ggLog,
-  }) async {
-    final diffTemplate = await _githubDiffTemplate.exec(
-      directory: directory,
-      ggLog: (_) {}, // coverage:ignore-line
-    );
-
-    final tagTemplate = await _githubTagTemplate.exec(
-      directory: directory,
-      ggLog: (_) {}, // coverage:ignore-line
-    );
-
-    final result = Project(
-      directory.path,
-      Config(diffTemplate: diffTemplate, tagTemplate: tagTemplate),
-    );
-
-    return result;
-  }
-
-  // ...........................................................................
-  final GithubDiffTemplate _githubDiffTemplate;
-  final GithubTagTemplate _githubTagTemplate;
+  ///
+  /// No link templates are handed over to cider. Thus cider does not write
+  /// repository links like
+  /// »[1.0.1]: https://github.com/org/repo/compare/1.0.0...1.0.1«
+  /// into CHANGELOG.md.
+  Future<Project> get({required Directory directory}) async =>
+      Project(directory.path, Config());
 }
 
 /// Mock for [CiderProject]
