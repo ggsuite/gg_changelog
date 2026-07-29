@@ -68,9 +68,18 @@ class Release extends DirCommand<void> {
         ? DateTime.parse(releaseDateStr)
         : null;
 
+    // Revert the escapes and links a previous cider run has left behind.
+    // Otherwise cider does not recognize headlines like »## \[1.1.3\] - ...«
+    // as a release and releases into the wrong section.
+    await unescapeChangelogInDirectory(directory);
+    await removeChangelogLinksInDirectory(directory);
+
     // Use cider to write into CHANGELOG.md
     final cider = await _ciderProject.get(directory: directory);
     await cider.release(releaseDate ?? DateTime.now(), version: releaseVersion);
+
+    // Revert the markdown escapes cider added while rewriting the changelog
+    await unescapeChangelogInDirectory(directory);
 
     // Remove the repository links cider took over from previous releases
     await removeChangelogLinksInDirectory(directory);

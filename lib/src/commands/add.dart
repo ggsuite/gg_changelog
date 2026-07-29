@@ -87,6 +87,12 @@ class Add extends DirCommand<bool> {
       await changelogFile.writeAsString('# Changelog\n\n');
     }
 
+    // Revert the escapes and links a previous cider run has left behind.
+    // Otherwise cider does not recognize headlines like »## \[1.1.3\] - ...«
+    // as a release and inserts the new message at the wrong place.
+    await unescapeChangelogInDirectory(directory);
+    await removeChangelogLinksInDirectory(directory);
+
     // Read CHANGELOG.md
     final changelog = await changelogFile.readAsString();
 
@@ -97,6 +103,9 @@ class Add extends DirCommand<bool> {
 
     final cider = await _ciderProject.get(directory: directory);
     await cider.addUnreleased(logType.name, message);
+
+    // Revert the markdown escapes cider added while rewriting the changelog
+    await unescapeChangelogInDirectory(directory);
 
     // Remove the repository links cider took over from previous releases
     await removeChangelogLinksInDirectory(directory);
