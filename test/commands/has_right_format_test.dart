@@ -8,6 +8,8 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:gg_changelog/gg_changelog.dart';
+import 'package:gg_log/gg_log.dart';
+import 'package:gg_status_printer/gg_status_printer.dart';
 import 'package:test/test.dart';
 import '../pubspec_yaml.dart';
 
@@ -29,7 +31,10 @@ const changeLogWithRightFormat = '''# Changelog
 
 void main() {
   final messages = <String>[];
-  final ggLog = messages.add;
+  // Strip the colors and the overwrite sequence so the expectations assert
+  // the text. One closure instance — mocktail matches ggLog by identity.
+  // ignore: prefer_function_declarations_over_variables
+  final GgLog ggLog = (String msg) => messages.add(rmControls(msg));
   late Directory d;
   late File changeLogFile;
   late HasRightFormat hasRightFormat;
@@ -104,17 +109,17 @@ void main() {
 
     group('exec(directory, ggLog, )', () {
       group('succeeds', () {
-        test('and logs ✅ when the format is correct', () async {
+        test('and logs ✓ when the format is correct', () async {
           await changeLogFile.writeAsString(changeLogWithRightFormat);
           await runner.run(['has-right-format', '-i', d.path]);
           expect(messages[0], '⌛️ CHANGELOG.md has right format');
-          expect(messages[1], contains('✅ CHANGELOG.md has right format'));
+          expect(messages[1], contains('✓ CHANGELOG.md has right format'));
         });
       });
 
       group('throws', () {
         group('an Exception containing the reason', () {
-          test('and logs ❌ when the format is incorrect', () async {
+          test('and logs ✗ when the format is incorrect', () async {
             await changeLogFile.writeAsString(changeLogWithWrongFormat);
 
             late String reason;
@@ -126,7 +131,7 @@ void main() {
             }
 
             expect(messages[0], '⌛️ CHANGELOG.md has right format');
-            expect(messages[1], contains('❌ CHANGELOG.md has right format'));
+            expect(messages[1], contains('✗ CHANGELOG.md has right format'));
 
             expect(reason, contains('Invalid release header format: "1.2.3"'));
           });
