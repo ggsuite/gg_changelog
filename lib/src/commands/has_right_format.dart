@@ -39,6 +39,7 @@ class HasRightFormat extends DirCommand<bool> {
     final printer = GgStatusPrinter<bool>(
       message: 'CHANGELOG.md has right format',
       ggLog: ggLog,
+      dark: true,
     );
 
     final result = await printer.logTask(
