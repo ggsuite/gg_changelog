@@ -363,6 +363,77 @@ void main() {
         });
       });
 
+      group('sorts the versions in CHANGELOG.md', () {
+        test('after releasing a version', () async {
+          // Add two versions in the wrong order. Version 2.0.0 carries an
+          // older date than 1.0.0 — like after a git merge.
+          final changelogFile = File('${d.path}/CHANGELOG.md');
+          final changelog = await changelogFile.readAsString();
+          await changelogFile.writeAsString(
+            '$changelog\n'
+            '## 1.0.0 - 2024-01-01\n\n'
+            '### Added\n\n'
+            '- Message A\n\n'
+            '## 2.0.0 - 2023-12-01\n\n'
+            '### Added\n\n'
+            '- Message B\n',
+          );
+
+          await release.exec(
+            directory: d,
+            ggLog: ggLog,
+            releaseVersion: Version(2, 1, 0),
+            releaseDate: DateTime(2024, 1, 2),
+          );
+
+          final content = await changelogContent();
+          final i210 = content.indexOf('## 2.1.0 - 2024-01-02');
+          final i200 = content.indexOf('## 2.0.0 - 2023-12-01');
+          final i100 = content.indexOf('## 1.0.0 - 2024-01-01');
+          expect(i210, greaterThanOrEqualTo(0));
+          expect(i210, lessThan(i200));
+          expect(i200, lessThan(i100));
+        });
+
+        test('when the version is already released', () async {
+          // Write a changelog containing 1.2.3 in the wrong order
+          final changelogFile = File('${d.path}/CHANGELOG.md');
+          final changelog = await changelogFile.readAsString();
+          await changelogFile.writeAsString(
+            '$changelog\n'
+            '## 1.0.0 - 2024-01-01\n\n'
+            '### Added\n\n'
+            '- Message A\n\n'
+            '## 1.2.3 - 2024-01-02\n\n'
+            '### Added\n\n'
+            '- Message B\n',
+          );
+
+          // Release the already released version 1.2.3
+          await release.exec(
+            directory: d,
+            ggLog: ggLog,
+            releaseVersion: Version(1, 2, 3),
+            releaseDate: DateTime(2024, 3, 4),
+          );
+
+          // The user was informed that nothing was released
+          expect(
+            messages.last,
+            contains('The version »1.2.3« is already in CHANGELOG.md'),
+          );
+
+          // But the versions were sorted
+          final content = await changelogContent();
+          final iUnreleased = content.indexOf('## Unreleased');
+          final i123 = content.indexOf('## 1.2.3 - 2024-01-02');
+          final i100 = content.indexOf('## 1.0.0 - 2024-01-01');
+          expect(iUnreleased, greaterThanOrEqualTo(0));
+          expect(iUnreleased, lessThan(i123));
+          expect(i123, lessThan(i100));
+        });
+      });
+
       group('throws', () {
         test('when CHANGELOG.md does not exist', () async {
           final changelogFile = File('${d.path}/CHANGELOG.md');
