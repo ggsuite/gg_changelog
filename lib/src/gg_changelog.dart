@@ -16,7 +16,9 @@ class GgChangelog extends Command<dynamic> {
     addSubcommand(GithubDiffTemplate(ggLog: ggLog));
     addSubcommand(GithubTagTemplate(ggLog: ggLog));
     addSubcommand(HasRightFormat(ggLog: ggLog));
+    addSubcommand(HasVersion(ggLog: ggLog));
     addSubcommand(Release(ggLog: ggLog));
+    addSubcommand(Sort(ggLog: ggLog));
   }
 
   /// The log function

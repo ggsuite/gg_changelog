@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Add »sort« command sorting the versions in CHANGELOG.md, newest first, to
+neutralize merge artifacts
+- Add »has-version« command checking if a version is already in CHANGELOG.md
+
+### Changed
+
+- »release« sorts the versions in CHANGELOG.md, also when the version is
+already released
+- Fix issues with CHANGELOG.md
+
 ## 1.1.4 - 2026-08-03
 
 ### Changed
