@@ -29,6 +29,7 @@ class GithubDiffTemplate extends DirCommand<String> {
   Future<String> exec({
     required Directory directory,
     required GgLog ggLog,
+    Map<String, dynamic> options = const {},
   }) async {
     // Does the directory exist?
     await check(directory: directory);

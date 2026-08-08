@@ -31,6 +31,7 @@ class HasRightFormat extends DirCommand<bool> {
   Future<bool> exec({
     required Directory directory,
     required GgLog ggLog,
+    Map<String, dynamic> options = const {},
   }) async {
     // Does the directory exist?
     await check(directory: directory);
