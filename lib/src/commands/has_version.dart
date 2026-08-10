@@ -30,6 +30,7 @@ class HasVersion extends DirCommand<bool> {
     required Directory directory,
     required GgLog ggLog,
     Version? version,
+    Map<String, dynamic> options = const {},
   }) async {
     final result = await get(
       directory: directory,

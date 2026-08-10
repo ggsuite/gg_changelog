@@ -34,6 +34,7 @@ class Release extends DirCommand<void> {
     required GgLog ggLog,
     Version? releaseVersion,
     DateTime? releaseDate,
+    Map<String, dynamic> options = const {},
   }) => get(
     directory: directory,
     ggLog: ggLog,

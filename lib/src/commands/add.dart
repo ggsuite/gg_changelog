@@ -57,6 +57,7 @@ class Add extends DirCommand<bool> {
     required GgLog ggLog,
     String? message,
     LogType? logType,
+    Map<String, dynamic> options = const {},
   }) => get(
     directory: directory,
     ggLog: ggLog,
