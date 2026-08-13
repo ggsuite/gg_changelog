@@ -139,7 +139,8 @@ void main() {
           expect(content, isNot(contains(r'\_')));
         });
 
-        test('and repairs version headlines escaped by a previous run', () async {
+        test('and repairs version headlines escaped by a '
+            'previous run', () async {
           // A headline like »## \[1.0.0\] - 2024-01-01« is not recognized as a
           // release by cider. It has to be repaired before cider reads it.
           final changelogFile = File('${d.path}/CHANGELOG.md');
