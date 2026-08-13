@@ -11,6 +11,7 @@ import 'package:gg_changelog/gg_changelog.dart';
 import 'package:gg_log/gg_log.dart';
 import 'package:gg_status_printer/gg_status_printer.dart';
 import 'package:test/test.dart';
+
 import '../pubspec_yaml.dart';
 
 const changeLogWithWrongFormat = '''# Changelog
