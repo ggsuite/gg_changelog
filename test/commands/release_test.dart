@@ -1,5 +1,5 @@
 // @license
-// Copyright (c) 2019 - 2024 Dr. Gabriel Gatzsche. All Rights Reserved.
+// Copyright (c) ggsuite
 //
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
@@ -139,40 +139,38 @@ void main() {
           expect(content, isNot(contains(r'\_')));
         });
 
-        test(
-          'and repairs version headlines escaped by a previous run',
-          () async {
-            // A headline like »## \[1.0.0\] - 2024-01-01« is not recognized as a
-            // release by cider. It has to be repaired before cider reads it.
-            final changelogFile = File('${d.path}/CHANGELOG.md');
-            final changelog = await changelogFile.readAsString();
-            await changelogFile.writeAsString(
-              '$changelog\n'
-              r'## \[1.0.0\] - 2024-01-01'
-              '\n\n'
-              '### Added\n\n'
-              '- Message 0\n',
-            );
+        test('and repairs version headlines escaped by a '
+            'previous run', () async {
+          // A headline like »## \[1.0.0\] - 2024-01-01« is not recognized as a
+          // release by cider. It has to be repaired before cider reads it.
+          final changelogFile = File('${d.path}/CHANGELOG.md');
+          final changelog = await changelogFile.readAsString();
+          await changelogFile.writeAsString(
+            '$changelog\n'
+            r'## \[1.0.0\] - 2024-01-01'
+            '\n\n'
+            '### Added\n\n'
+            '- Message 0\n',
+          );
 
-            await release.exec(
-              directory: d,
-              ggLog: ggLog,
-              releaseVersion: Version(1, 2, 3),
-              releaseDate: DateTime(2024, 1, 2),
-            );
+          await release.exec(
+            directory: d,
+            ggLog: ggLog,
+            releaseVersion: Version(1, 2, 3),
+            releaseDate: DateTime(2024, 1, 2),
+          );
 
-            final content = await changelogContent();
-            expect(content, contains('## 1.2.3 - 2024-01-02'));
-            expect(content, contains('## 1.0.0 - 2024-01-01'));
-            expect(content, isNot(contains(r'\[')));
+          final content = await changelogContent();
+          expect(content, contains('## 1.2.3 - 2024-01-02'));
+          expect(content, contains('## 1.0.0 - 2024-01-01'));
+          expect(content, isNot(contains(r'\[')));
 
-            // The new release comes before the repaired one
-            expect(
-              content.indexOf('## 1.2.3 - 2024-01-02'),
-              lessThan(content.indexOf('## 1.0.0 - 2024-01-01')),
-            );
-          },
-        );
+          // The new release comes before the repaired one
+          expect(
+            content.indexOf('## 1.2.3 - 2024-01-02'),
+            lessThan(content.indexOf('## 1.0.0 - 2024-01-01')),
+          );
+        });
 
         group('and turns ## Unreleased into ## 1.0.0 - 2024-04-05', () {
           group('with release date', () {

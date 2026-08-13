@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.1.0 - 2026-08-13
+
+### Changed
+
+- Rework copyright headers
+
+### Fixed
+
+- Cleanup copy right headers. Update to dart 3.13. Auto fixes.
+
 ## 2.0.1 - 2026-08-11
 
 ### Changed
