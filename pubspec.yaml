@@ -1,6 +1,6 @@
 name: gg_changelog
 description: gg_changelog offers various tools manipulate dart CHANGELOG.md files. Based on cider package.
-version: 2.1.0
+version: 2.1.1
 repository: https://github.com/inlavigo/gg_changelog.git
 
 environment:
@@ -9,14 +9,14 @@ environment:
 dependencies:
   args: ^2.7.0
   cider: ^0.2.10
-  gg_args: ^3.1.0
+  gg_args: ^3.1.1
   gg_console_colors: ^2.4.0
-  gg_log: ^1.1.0
+  gg_log: ^1.2.0
   gg_process: ^1.2.0
   gg_status_printer: ^1.5.0
   mocktail: ^1.0.5
   path: ^1.9.1
-  pub_semver: ^2.2.0
+  pub_semver: ^2.2.1
 
 dev_dependencies:
   gg_capture_print: ^1.1.0
