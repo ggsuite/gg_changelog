@@ -74,9 +74,35 @@ class HasRightFormat extends DirCommand<bool> {
       await cider.getAllVersions();
       return true;
     } on FormatException catch (e) {
-      ggLog.call(e.message);
+      // Show the expected structure instead of the bare parser error. The
+      // example release takes the version of the broken headline, or the
+      // pubspec.yaml version when the headline carries none.
+      final version =
+          _version.firstMatch(e.message)?[0] ??
+          (await cider.getVersion()).toString();
+      ggLog.call(wrongFormatMessage(version: version, date: DateTime.now()));
       return false;
     }
+  }
+
+  // ...........................................................................
+  /// Tells the user how CHANGELOG.md must be structured, with an example
+  /// release of [version] on [date].
+  static String wrongFormatMessage({
+    required String version,
+    required DateTime date,
+  }) {
+    final day = date.toIso8601String().substring(0, 10);
+    return [
+      'Please open CHANGELOG.md.',
+      'Ensure the following structure:',
+      '',
+      '# CHANGELOG',
+      '',
+      '## Unreleased',
+      '',
+      '## $version - $day',
+    ].join('\n');
   }
 
   // ######################
@@ -84,6 +110,9 @@ class HasRightFormat extends DirCommand<bool> {
   // ######################
 
   final CiderProject _ciderProject;
+
+  /// Matches the version in cider's »Invalid release header format« error.
+  static final _version = RegExp(r'\d+\.\d+\.\d+[^\s"\]\\]*');
 
   // ...........................................................................
   void _addParam() {

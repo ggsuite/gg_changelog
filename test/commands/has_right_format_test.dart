@@ -7,9 +7,12 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:cider/cider.dart';
 import 'package:gg_changelog/gg_changelog.dart';
 import 'package:gg_log/gg_log.dart';
 import 'package:gg_status_printer/gg_status_printer.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
 import '../pubspec_yaml.dart';
@@ -29,6 +32,12 @@ const changeLogWithRightFormat = '''# Changelog
 - Message 1
 - Message 2
 ''';
+
+class MockProject extends Mock implements Project {}
+
+/// The guidance logged for a wrong format with an example release [version].
+String wrongFormat(String version) =>
+    HasRightFormat.wrongFormatMessage(version: version, date: DateTime.now());
 
 void main() {
   final messages = <String>[];
@@ -56,6 +65,25 @@ void main() {
   });
 
   group('HasRightFormat', () {
+    group('wrongFormatMessage(version, date)', () {
+      test('shows the expected structure of CHANGELOG.md', () {
+        expect(
+          HasRightFormat.wrongFormatMessage(
+            version: '0.0.0',
+            date: DateTime(2026, 10, 6),
+          ),
+          'Please open CHANGELOG.md.\n'
+          'Ensure the following structure:\n'
+          '\n'
+          '# CHANGELOG\n'
+          '\n'
+          '## Unreleased\n'
+          '\n'
+          '## 0.0.0 - 2026-10-06',
+        );
+      });
+    });
+
     group('get(directory, ggLog)', () {
       group('should return false', () {
         group('and log the reason', () {
@@ -70,11 +98,28 @@ void main() {
 
             // Check result
             expect(result, false);
-            expect(
-              messages[0],
-              'Invalid release header format: '
-              '"1.2.3"',
-            );
+            expect(messages[0], wrongFormat('1.2.3'));
+          });
+
+          test('with the pubspec.yaml version '
+              'when the error names no version', () async {
+            final project = MockProject();
+            when(() => project.getAllVersions())
+                .thenThrow(const FormatException('Something is wrong'));
+            when(() => project.getVersion())
+                .thenAnswer((_) async => Version(2, 4, 6));
+
+            final ciderProject = MockCiderProject();
+            when(() => ciderProject.get(directory: d))
+                .thenAnswer((_) async => project);
+
+            final result = await HasRightFormat(
+              ggLog: ggLog,
+              ciderProject: ciderProject,
+            ).get(directory: d, ggLog: ggLog);
+
+            expect(result, false);
+            expect(messages[0], wrongFormat('2.4.6'));
           });
         });
       });
@@ -134,7 +179,8 @@ void main() {
             expect(messages[0], '⌛️ CHANGELOG.md has right format');
             expect(messages[1], contains('✗ CHANGELOG.md has right format'));
 
-            expect(reason, contains('Invalid release header format: "1.2.3"'));
+            expect(reason, contains('Please open CHANGELOG.md.'));
+            expect(reason, contains('## 1.2.3 - '));
           });
         });
       });
