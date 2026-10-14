@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Show the expected CHANGELOG.md structure when its format is wrong
+
 ## 2.2.2 - 2026-10-06
 
 ### Changed
