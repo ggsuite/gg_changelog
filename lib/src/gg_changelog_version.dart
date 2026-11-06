@@ -9,4 +9,4 @@
 // coverage:ignore-file
 
 /// The version of the `gg_changelog` package.
-const String ggChangelogVersion = '2.2.4';
+const String ggChangelogVersion = '2.2.5';
