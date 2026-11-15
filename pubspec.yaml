@@ -19,7 +19,7 @@ dependencies:
   pub_semver: ^2.2.1
 
 dev_dependencies:
-  dna_ggsuite: ^1.0.1
+  dna_ggsuite: ^2.0.0
   gg_capture_print: ^1.2.1
   helix: ^1.14.0
   lints: ^6.1.0
